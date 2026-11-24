@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Pass / Fail Predictor - React App</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- React 18 & ReactDOM from CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX transformation in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 50%, #f5f3ff 100%);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #root {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Layout */
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      padding: 1.25rem 2rem;
+    }
+
+    .header-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-badge {
+      font-size: 2.25rem;
+      background: #eef2ff;
+      border-radius: 12px;
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(79, 70, 229, 0.1);
+    }
+
+    .site-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: -0.02em;
+    }
+
+    .site-header p {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.15rem;
+    }
+
+    /* Body - contains only 1 form */
+    .site-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .study-form {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 2.25rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 1rem;
+    }
+
+    .form-title-bar h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .info-tag {
+      background: #ede9fe;
+      color: #6d28d9;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 1.05rem;
+      font-family: inherit;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      background-color: #f8fafc;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .text-input:focus {
+      background-color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    }
+
+    .field-hint {
+      font-size: 0.775rem;
+      color: #94a3b8;
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      color: #ffffff;
+      border: none;
+      padding: 0.95rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .submit-button:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px -2px rgba(79, 70, 229, 0.35);
+    }
+
+    .submit-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .alert-box {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .alert-box.error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+
+    .result-card {
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card.pass {
+      background: #ecfdf5;
+      border: 1.5px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .result-card.fail {
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .result-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .result-info {
+      flex: 1;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+    }
+
+    .result-status {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin: 0.2rem 0 0.4rem 0;
+    }
+
+    .result-card.pass .result-status {
+      color: #047857;
+    }
+
+    .result-card.fail .result-status {
+      color: #b91c1c;
+    }
+
+    .result-detail {
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+
+    .result-pill {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .result-card.pass .result-pill {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .result-card.fail .result-pill {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .prob-meter {
+      margin-top: 0.85rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 0.65rem;
+      border-radius: 8px;
+    }
+
+    .prob-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .result-card.pass .progress-fill {
+      height: 100%;
+      background: #10b981;
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .result-card.fail .progress-fill {
+      height: 100%;
+      background: #ef4444;
+      border-radius: 9999px;
+      transition: width 0.5s ease-in-out;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 1.25rem 2rem;
+      text-align: center;
+    }
+
+    .site-footer p {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    @media (max-width: 640px) {
+      .site-header { padding: 1rem; }
+      .header-content { flex-direction: column; text-align: center; }
+      .study-form { padding: 1.5rem; }
+      .result-card { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React Code Transpiled by Babel in Browser -->
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [studyHours, setStudyHours] = useState('');
+      const [result, setResult] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [errorMsg, setErrorMsg] = useState('');
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMsg('');
+
+        // 1. Validation
+        if (studyHours === '' || isNaN(studyHours)) {
+          setErrorMsg('Please enter a valid study hour number.');
+          setResult(null);
+          return;
+        }
+
+        const hours = parseFloat(studyHours);
+        if (hours < 0 || hours > 24) {
+          setErrorMsg('Please enter realistic study hours (between 0 and 24).');
+          setResult(null);
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          // Attempt to call the FastAPI backend endpoint if it's running
+          const response = await fetch('http://127.0.0.1:8000/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ StudyHours: hours }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setResult({
+              status: data.result,
+              hours: hours,
+              source: 'FastAPI Backend'
+            });
+            setLoading(false);
+            return;
+          }
+          throw new Error('API server offline');
+        } catch {
+          // Exact Logistic Regression Formula from the trained logisticmodel.pkl
+          // Formula: logit = (1.121604 * hours) - 6.102256
+          // Boundary: hours >= 5.44 => Pass, else Fail
+          const coef = 1.1216044109489698;
+          const intercept = -6.102256178294062;
+          const logit = coef * hours + intercept;
+          const probability = 1 / (1 + Math.exp(-logit));
+          const predictedResult = logit >= 0 ? 'Pass' : 'Fail';
+
+          setResult({
+            status: predictedResult,
+            hours: hours,
+            probability: (probability * 100).toFixed(1),
+            source: 'Logistic Regression Model'
+          });
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="page-wrapper">
+          {/* Header */}
+          <header className="site-header">
+            <div className="header-content">
+              <div className="logo-badge">🎓</div>
+              <div>
+                <h1>Student Performance Predictor</h1>
+                <p>Predict exam pass or fail based on study hours</p>
+              </div>
+            </div>
+          </header>
+
+          {/* Body Part: Contains ONLY 1 form */}
+          <main className="site-body">
+            <form className="study-form" onSubmit={handleSubmit}>
+              <div className="form-title-bar">
+                <h2>Exam Result Prediction Form</h2>
+                <span className="info-tag">Single Feature ML</span>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="studyHoursInput" className="form-label">
+                  Enter Student Study Hr:
+                </label>
+                <input
+                  id="studyHoursInput"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="24"
+                  value={studyHours}
+                  onChange={(e) => setStudyHours(e.target.value)}
+                  placeholder="e.g. 6.5"
+                  className="text-input"
+                  autoFocus
+                />
+                <small className="field-hint">Enter daily hours studied (e.g. 3, 5.5, 8)</small>
+              </div>
+
+              <button type="submit" className="submit-button" disabled={loading}>
+                {loading ? 'Evaluating...' : 'Check Result (Pass / Fail)'}
+              </button>
+
+              {/* Error Message */}
+              {errorMsg && (
+                <div className="alert-box error">
+                  <span>⚠️ {errorMsg}</span>
+                </div>
+              )}
+
+              {/* Message Displaying Student Pass or Fail */}
+              {result && !errorMsg && (
+                <div className={`result-card ${result.status.toLowerCase()}`}>
+                  <div className="result-icon">
+                    {result.status === 'Pass' ? '🎉' : '❌'}
+                  </div>
+                  <div className="result-info">
+                    <span className="result-label">Prediction Result:</span>
+                    <h3 className="result-status">
+                      Student will {result.status.toUpperCase()}
+                    </h3>
+                    <p className="result-detail">
+                      For <strong>{result.hours}</strong> study hour(s), model predicts:{' '}
+                      <span className="result-pill">{result.status}</span>
+                    </p>
+                    {result.probability && (
+                      <div className="prob-meter">
+                        <div className="prob-label">
+                          <span>Pass Probability:</span>
+                          <strong>{result.probability}%</strong>
+                        </div>
+                        <div className="progress-track">
+                          <div
+                            className="progress-fill"
+                            style={{ width: `${result.probability}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </form>
+          </main>
+
+          {/* Footer */}
+          <footer className="site-footer">
+            <p>© 2026 Student Study Hour Predictor • Built with React.js & Machine Learning</p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
