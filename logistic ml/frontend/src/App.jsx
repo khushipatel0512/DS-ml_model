@@ -28,8 +28,8 @@ function App() {
     setLoading(true);
 
     try {
-      // Attempt to call the FastAPI backend if running
-      const response = await fetch('http://127.0.0.1:8000/predict', {
+      // Call deployed Render FastAPI backend API
+      const response = await fetch('https://student-marks-predict-xncn.onrender.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ StudyHours: hours }),
@@ -40,12 +40,12 @@ function App() {
         setResult({
           status: data.result,
           hours: hours,
-          source: 'API Model'
+          source: 'Render Backend API'
         });
         setLoading(false);
         return;
       }
-      throw new Error('API server offline');
+      throw new Error('API server returned error');
     } catch {
       // Fallback: Exact Logistic Regression formula trained on the dataset
       // Logit: z = (1.121604 * hours) - 6.102256
