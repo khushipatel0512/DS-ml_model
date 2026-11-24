@@ -29,7 +29,7 @@ function App() {
 
     try {
       // Call deployed Render FastAPI backend API
-      const response = await fetch('https://student-marks-predict-xncn.onrender.com/predict', {
+      const response = await fetch('https://logistic-ml-fb7v.onrender.com/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ StudyHours: hours }),
